@@ -1,8 +1,9 @@
 //#region global imports
-// const DButils = require("./routes/utils/DButils");
+const DButils = require("./routes/utils/DButils");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
-require("dotenv").config();
+// {path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'}
+require("dotenv").config({path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'});
 //#endregion
 //#region express configures
 var express = require("express");
@@ -10,7 +11,8 @@ var path = require("path");
 const session = require("client-sessions");
 var logger = require("morgan");
 var cors = require("cors");
-
+//console.log(process.env);
+// console.log(env.COOKIE_SECRET);
 var app = express();
 app.use(logger("dev")); //logger
 app.use(express.json()); // parse application/json
@@ -28,14 +30,14 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
-
+// DO NOT UNCOMMENT THIS SHIT
 // middleware to serve all the needed static files under the dist directory - loaded from the index.html file
 // https://expressjs.com/en/starter/static-files.html
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 
-app.get("/api", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+// app.get("/api", (req, res) => {
+//   res.sendFile(__dirname + "/index.html");
+// });
 
 const corsConfig = {
   origin: true,
@@ -73,7 +75,8 @@ app.use(function (req, res, next) {
 
 // ----> For cheking that our server is alive
 app.get("/alive", (req, res) => res.send("I'm alive"));
-
+app.get("/",(req,res)=> {
+})
 // Routings
 app.use("/users", users);
 app.use("/league", league);

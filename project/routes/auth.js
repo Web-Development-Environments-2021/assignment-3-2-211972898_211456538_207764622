@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcryptjs");
+require("dotenv").config({path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'});
 
 router.post("/Register", async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ router.post("/Register", async (req, res, next) => {
     // valid parameters
     // username exists
     const users = await DButils.execQuery(
-      "SELECT username FROM dbo.users_tirgul"
+      "SELECT username FROM dbo.users"
     );
 
     if (users.find((x) => x.username === req.body.username))
@@ -24,7 +25,7 @@ router.post("/Register", async (req, res, next) => {
 
     // add the new username
     await DButils.execQuery(
-      `INSERT INTO dbo.users_tirgul (username, password) VALUES ('${req.body.username}', '${hash_password}')`
+      `INSERT INTO dbo.users (username, password) VALUES ('${req.body.username}', '${hash_password}')`
     );
     res.status(201).send("user created");
   } catch (error) {
@@ -36,7 +37,7 @@ router.post("/Login", async (req, res, next) => {
   try {
     const user = (
       await DButils.execQuery(
-        `SELECT * FROM dbo.users_tirgul WHERE username = '${req.body.username}'`
+        `SELECT * FROM dbo.users WHERE username = '${req.body.username}'`
       )
     )[0];
     // user = user[0];

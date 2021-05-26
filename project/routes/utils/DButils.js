@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'});
 const sql = require("mssql");
 
 const config = {
@@ -26,32 +26,32 @@ exports.execQuery = async function (query) {
   }
 };
 
-// process.on("SIGINT", function () {
-//   if (pool) {
-//     pool.close(() => console.log("connection pool closed"));
-//   }
-// });
+process.on("SIGINT", function () {
+  if (pool) {
+    pool.close(() => console.log("connection pool closed"));
+  }
+});
 
-// poolConnect.then(() => {
-//   console.log("pool closed");
+poolConnect.then(() => {
+  console.log("pool closed");
 
-//   return sql.close();
-// });
+  return sql.close();
+});
 
-// exports.execQuery = function (query) {
-//   return new Promise((resolve, reject) => {
-//     sql
-//       .connect(config)
-//       .then((pool) => {
-//         return pool.request().query(query);
-//       })
-//       .then((result) => {
-//         // console.log(result);
-//         sql.close();
-//         resolve(result.recordsets[0]);
-//       })
-//       .catch((err) => {
-//         // ... error checks
-//       });
-//   });
-// };
+exports.execQuery = function (query) {
+  return new Promise((resolve, reject) => {
+    sql
+      .connect(config)
+      .then((pool) => {
+        return pool.request().query(query);
+      })
+      .then((result) => {
+        // console.log(result);
+        sql.close();
+        resolve(result.recordsets[0]);
+      })
+      .catch((err) => {
+        // ... error checks
+      });
+  });
+};
