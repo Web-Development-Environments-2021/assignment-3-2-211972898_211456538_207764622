@@ -47,50 +47,50 @@ app.options("*", cors(corsConfig));
 
 const port = process.env.PORT || "3000";
 
-// const auth = require("./routes/auth");
-// const users = require("./routes/users");
-// const league = require("./routes/league");
-// const teams = require("./routes/teams");
+const auth = require("./routes/auth");
+const users = require("./routes/users");
+const league = require("./routes/league");
+const teams = require("./routes/teams");
 
-// //#endregion
+//#endregion
 
-// //#region cookie middleware
-// app.use(function (req, res, next) {
-//   if (req.session && req.session.user_id) {
-//     DButils.execQuery("SELECT user_id FROM users")
-//       .then((users) => {
-//         if (users.find((x) => x.user_id === req.session.user_id)) {
-//           req.user_id = req.session.user_id;
-//         }
-//         next();
-//       })
-//       .catch((error) => next());
-//   } else {
-//     next();
-//   }
-// });
-// //#endregion
+//#region cookie middleware
+app.use(function (req, res, next) {
+  if (req.session && req.session.user_id) {
+    DButils.execQuery("SELECT user_id FROM users")
+      .then((users) => {
+        if (users.find((x) => x.user_id === req.session.user_id)) {
+          req.user_id = req.session.user_id;
+        }
+        next();
+      })
+      .catch((error) => next());
+  } else {
+    next();
+  }
+});
+//#endregion
 
-// // ----> For cheking that our server is alive
-// app.get("/alive", (req, res) => res.send("I'm alive"));
+// ----> For cheking that our server is alive
+app.get("/alive", (req, res) => res.send("I'm alive"));
 
-// // Routings
-// app.use("/users", users);
-// app.use("/league", league);
-// app.use("/teams", teams);
-// app.use(auth);
+// Routings
+app.use("/users", users);
+app.use("/league", league);
+app.use("/teams", teams);
+app.use(auth);
 
-// app.use(function (err, req, res, next) {
-//   console.error(err);
-//   res.status(err.status || 500).send(err.message);
-// });
+app.use(function (err, req, res, next) {
+  console.error(err);
+  res.status(err.status || 500).send(err.message);
+});
 
 const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
 
-// // process.on("SIGINT", function () {
-// //   if (server) {
-// //     server.close(() => console.log("server closed"));
-// //   }
-// // });
+process.on("SIGINT", function () {
+  if (server) {
+    server.close(() => console.log("server closed"));
+  }
+});
