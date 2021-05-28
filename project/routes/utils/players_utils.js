@@ -51,5 +51,29 @@ async function getPlayersByTeam(team_id) {
   return players_info;
 }
 
+async function getAllPlayerInfoById(playerId){
+  const player = await axios.get(`${api_domain}/players/${playerId}`, {
+    params: {
+      include: "team",
+      api_token: process.env.api_token,
+    },
+  });
+  const { name} = player.data.data.team.data;
+  const { fullname, image_path,position_id,common_name, nationality,birthdate,birthcountry,height,weight } = player.data.data;
+  return {
+    name: fullname,
+    team_name: name,
+    image: image_path,
+    position: position_id,
+    common_name : common_name,
+    nationality : nationality,
+    birthdate : birthdate,
+    birthcountry : birthcountry,
+    height : height, 
+    weight : weight,
+  };
+}
+
 exports.getPlayersByTeam = getPlayersByTeam;
 exports.getPlayersInfo = getPlayersInfo;
+exports.getAllPlayerInfoById = getAllPlayerInfoById;

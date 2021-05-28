@@ -18,4 +18,29 @@ async function getCoachInfoByTeam(team_id) {
     };
 }
 
+async function getAllCoachInfoById(coachId){
+  const coach = await axios.get(`${api_domain}/coaches/${coachId}`, {
+    params: {
+      api_token: process.env.api_token,
+    },
+  });
+  const { fullname, image_path,common_name, nationality,birthdate,birthcountry, team_id} = coach.data.data;
+  const team = await axios.get(`${api_domain}/teams/${team_id}`, {
+    params: {
+      api_token: process.env.api_token,
+    },
+  });
+  const { name} = team.data.data;
+  return {
+    name: fullname,
+    team_name: name,
+    image: image_path,
+    common_name : common_name,
+    nationality : nationality,
+    birthdate : birthdate,
+    birthcountry : birthcountry,
+  };
+}
+
 exports.getCoachInfoByTeam = getCoachInfoByTeam;
+exports.getAllCoachInfoById = getAllCoachInfoById;
