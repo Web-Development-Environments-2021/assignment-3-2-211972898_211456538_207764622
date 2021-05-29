@@ -6,12 +6,12 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE dbo.calendarEvents
 (
-    calendarEventsId INT NOT NULL PRIMARY KEY, -- primary key column
+    calendarEventsId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
     calendarId INT NOT NULL,
     description TEXT NOT NULL,
     CONSTRAINT FK_eventToCalendar 
     FOREIGN KEY (calendarId)
-    REFERENCES dbo.gameCalendar(gameCalendarId)
+    REFERENCES dbo.matchCalendar(matchCalendarId)
     -- specify more columns here
 );
 GO

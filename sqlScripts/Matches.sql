@@ -6,7 +6,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE dbo.match
 (
-    matchId INT NOT NULL PRIMARY KEY, -- primary key column
+    matchId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
     date DATE NOT NULL,
     hour TIME NOT NULL,
     homeTeamId INT NOT NULL,
