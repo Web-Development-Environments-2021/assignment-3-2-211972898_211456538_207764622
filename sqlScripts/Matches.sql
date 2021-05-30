@@ -12,9 +12,13 @@ CREATE TABLE dbo.match
     homeTeamId INT NOT NULL,
     awayTeamId INT NOT NULL,
     stadium [VARCHAR] (20) NOT NULL,
+    refereeId INT NOT NULL,
     homeGoals INT,
     awayGoals INT,
     calendarId INT,
+    CONSTRAINT FK_refereeToMatch 
+    FOREIGN KEY (refereeId)
+    REFERENCES dbo.referee(refereeId)
     -- specify more columns here
 );
 GO

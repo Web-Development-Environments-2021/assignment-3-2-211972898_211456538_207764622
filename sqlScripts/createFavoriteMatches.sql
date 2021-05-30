@@ -9,6 +9,9 @@ CREATE TABLE dbo.FavoriteMatches
     FavoriteMatchesrRecordId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
     user_id INT NOT NULL,
     matchId INT NOT NULL
+    CONSTRAINT FK_matchToFavMatches
+    FOREIGN KEY (matchId)
+    REFERENCES dbo.match(matchId)
     -- specify more columns here
 );
 GO
