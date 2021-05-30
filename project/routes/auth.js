@@ -12,21 +12,22 @@ router.post("/Register", async (req, res, next) => {
     const users = await DButils.execQuery(
       "SELECT username FROM dbo.users"
     );
-
     if (users.find((x) => x.username === req.body.username))
       throw { status: 409, message: "Username taken" };
-
     //hash the password
     let hash_password = bcrypt.hashSync(
       req.body.password,
       parseInt(process.env.bcrypt_saltRounds)
     );
     req.body.password = hash_password;
-
+    //sdsadsad
+    console.log(req.body.username,hash_password);
     // add the new username
     await DButils.execQuery(
       `INSERT INTO dbo.users (username, password) VALUES ('${req.body.username}', '${hash_password}')`
     );
+    console.log('HERE');
+
     res.status(201).send("user created");
   } catch (error) {
     next(error);
