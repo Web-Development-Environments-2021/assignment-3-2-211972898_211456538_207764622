@@ -48,7 +48,7 @@ async function getMatchesInfo(matches_ids_list) {
     let matches_info = await Promise.all(promises);
     return matches_info;
 }
-  
+
   
 
 exports.isPastGame = isPastGame;

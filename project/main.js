@@ -34,7 +34,6 @@ app.use(express.static(path.join(__dirname, "public"))); //To serve static files
 // middleware to serve all the needed static files under the dist directory - loaded from the index.html file
 // https://expressjs.com/en/starter/static-files.html
 // app.use(express.static("dist"));
-
 // app.get("/api", (req, res) => {
 //   res.sendFile(__dirname + "/index.html");
 // });
@@ -75,22 +74,20 @@ app.use(function (req, res, next) {
 });
 //#endregion
 
+//refirect path to /league/getDetails
 app.get("/", async (req,res,next)=> {
-  //refirect path to /league/getDetails
-  try{
-    res.redirect('/league/getDetails');
-  }
-  catch(erro){
-    next(error)
-  }
-})
+  try{res.redirect('/league/getDetails');}
+  catch(erro){next(error)}
+});
+
 // ----> For cheking that our server is alive
 app.get("/alive", (req, res,next) => res.send("I'm alive"));
 
+// About Page
 app.get("/About", async (req, res,next)=>{
-  // TODO: add text inforamtion and link to all prev projects
+  // TODO: Add project link information
   let object = {
-    text: "dsfsdfdsfsdf",
+    text: "This is the project Guy Ron And Noam Build and here some link about the porject progress in the last couple of weeks",
     links:[
       'link1',
       'link2',
@@ -99,8 +96,40 @@ app.get("/About", async (req, res,next)=>{
   res.send(object);
 });
 
+// Search 
 app.get("/Search",async (req, res,next)=>{
+  //TODO: try to deside in front or back and how to mannage it
   try{
+    const query_type = req.query.type || 'team'; // the table we work on
+    const query_value = req.query.query || ''; // the search string we get from user 
+    const order = req.query.orderBy || 'ASC'; // in witch order we organize the row
+    const position = req.query.position;
+    const in_team = req.query.inTeam;
+    let position_sql = true;
+    let sql_query;
+    switch(query_type){
+      case 'team':
+        sql_query = `SELECT * FROM teams WHERE '%${query_value}%' ORDER BY ${order}`;
+        break;
+      case 'player':
+        if(position){position_sql = "position = ";}
+        sql_query = `SELECT * FROM players WHERE '%${query_value}%' AND ${position_sql} ORDER BY ${order}`;
+        break;
+      case 'coach':
+        if(position)
+        sql_query = `SELECT * FROM coach WHERE '%${query_value}%' AND ${position_sql} ORDER BY ${order}`;
+        break;   
+      default:
+        break;
+    }
+  }
+  catch{
+
+  }
+
+
+  try{
+
     const type = req.query.In || 'team';
     const queryValue = req.query.Value || '';
     const order = req.query.orderBy || 'ASC';
@@ -121,8 +150,7 @@ app.get("/Search",async (req, res,next)=>{
   
 });
 
-
-// Routings
+// Routings (modolar)
 app.use("/", auth);
 app.use("/users", users);
 app.use("/league", league);
@@ -130,16 +158,18 @@ app.use("/teams", teams);
 app.use("/players", players);
 app.use("/coaches",coaches);
 
-// Error handler
+// Global-Error handler
 app.use(function (err, req, res, next) {
   console.error(err);
   res.status(err.status || 500).send(err.message);
 });
 
+// Create Server on @port
 const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
 
+// on server "End connection"(SINIT) close connection
 process.on("SIGINT", function () {
   if (server) {
     server.close(() => console.log("server closed"));
