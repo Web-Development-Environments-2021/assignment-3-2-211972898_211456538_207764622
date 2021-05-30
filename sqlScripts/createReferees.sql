@@ -6,7 +6,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE dbo.referee
 (
-    refereeId INT NOT NULL PRIMARY KEY, -- primary key column
+    refereeId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
     fullname [NVARCHAR](50) NOT NULL
 );
 GO
