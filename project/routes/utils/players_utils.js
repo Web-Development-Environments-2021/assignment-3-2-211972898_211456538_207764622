@@ -33,6 +33,8 @@ async function getPlayersInfo(players_ids_list) {
   return extractRelevantPlayerData(players_info);
 }
 
+
+
 function extractRelevantPlayerData(players_info) {
   return players_info.map((player_info) => {
     if (player_info.data.data === undefined){

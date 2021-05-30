@@ -20,14 +20,10 @@ router.post("/Register", async (req, res, next) => {
       parseInt(process.env.bcrypt_saltRounds)
     );
     req.body.password = hash_password;
-    //sdsadsad
-    console.log(req.body.username,hash_password);
     // add the new username
     await DButils.execQuery(
       `INSERT INTO dbo.users (username, password) VALUES ('${req.body.username}', '${hash_password}')`
     );
-    console.log('HERE');
-
     res.status(201).send("user created");
   } catch (error) {
     next(error);

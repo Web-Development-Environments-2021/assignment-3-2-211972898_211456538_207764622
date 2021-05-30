@@ -11,4 +11,3 @@ CREATE TABLE dbo.FavoriteTeams
     teamId INT NOT NULL
     -- specify more columns here
 );
-GO
