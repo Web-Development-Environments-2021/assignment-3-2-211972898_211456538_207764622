@@ -18,19 +18,21 @@ async function getPlayerIdsByTeam(team_id) {
 }
 
 async function getPlayersInfo(players_ids_list) {
-  let promises = [];
-  players_ids_list.map((id) =>
-    promises.push(
-      axios.get(`${api_domain}/players/${id}`, {
-        params: {
-          api_token: process.env.api_token,
-          include: "team",
-        },
-      })
-    )
-  );
-  let players_info = await Promise.all(promises);
-  return extractRelevantPlayerData(players_info);
+  // let promises = [];
+  // console.log(player_ids_list);
+  // players_ids_list.map((id) =>
+  //   promises.push(
+  //     axios.get(`${api_domain}/players/${id}`, {
+  //       params: {
+  //         api_token: process.env.api_token,
+  //         include: "team",
+  //       },
+  //     })
+  //   )
+  // );
+  // let players_info = await Promise.all(promises);
+  // return extractRelevantPlayerData(players_info);
+  console.log("FUCK",player_ids_list);
 }
 
 function extractRelevantPlayerData(players_info) {

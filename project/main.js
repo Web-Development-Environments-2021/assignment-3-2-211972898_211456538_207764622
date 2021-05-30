@@ -33,11 +33,11 @@ app.use(express.static(path.join(__dirname, "public"))); //To serve static files
 // DO NOT UNCOMMENT THIS SHIT
 // middleware to serve all the needed static files under the dist directory - loaded from the index.html file
 // https://expressjs.com/en/starter/static-files.html
-app.use(express.static("dist"));
+// app.use(express.static("dist"));
 
-app.get("/api", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+// app.get("/api", (req, res) => {
+//   res.sendFile(__dirname + "/index.html");
+// });
 
 const corsConfig = {
   origin: true,
@@ -98,8 +98,6 @@ app.get("/About", async (req, res,next)=>{
   };
   res.send(object);
 });
-
-
 
 // Routings
 app.use("/", auth);

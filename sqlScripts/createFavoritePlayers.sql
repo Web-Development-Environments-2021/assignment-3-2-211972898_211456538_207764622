@@ -6,9 +6,9 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE dbo.FavoritePlayers
 (
-    FavoritePlayersId INT NOT NULL PRIMARY KEY, -- primary key column
-    userId [NVARCHAR](50) NOT NULL,
-    playerId [NVARCHAR](50) NOT NULL
+    FavoritePlayerRecordId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
+    user_id INT NOT NULL,
+    playerId INT NOT NULL
     -- specify more columns here
 );
 GO

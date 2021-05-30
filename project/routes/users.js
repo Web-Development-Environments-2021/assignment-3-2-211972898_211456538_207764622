@@ -44,8 +44,10 @@ router.get("/favoritePlayers", async (req, res, next) => {
     const user_id = req.session.user_id;
     let favorite_players = {};
     const player_ids = await users_utils.getFavoritePlayers(user_id);
+    console.log(player_ids,"blallaslaldallasd");
     let player_ids_array = [];
-    player_ids.map((element) => player_ids_array.push(element.player_id)); //extracting the players ids into array
+    player_ids.map((element) => player_ids_array.push(element.playerId)); //extracting the players ids into array
+    console.log(player_ids_array);
     const results = await players_utils.getPlayersInfo(player_ids_array);
     res.status(200).send(results);
   } catch (error) {
