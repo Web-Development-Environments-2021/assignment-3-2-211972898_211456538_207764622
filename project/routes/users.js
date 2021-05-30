@@ -4,6 +4,7 @@ const DButils = require("./utils/DButils");
 const users_utils = require("./utils/users_utils");
 const players_utils = require("./utils/players_utils");
 const team_utils = require("./utils/team_utils");
+const game_utils = require("./utils/game_utils");
 
 /**
  * Authenticate all incoming requests by middleware
@@ -23,9 +24,9 @@ router.use(async function (req, res, next) {
   }
 });
 
-/**
- * This path gets body with playerId and save this player in the favorites list of the logged-in user
- */
+// ------------------- PLAYERS -----------------------
+
+/** This path gets body with playerId and save this player in the favorites list of the logged-in user*/
 router.post("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
@@ -37,9 +38,7 @@ router.post("/favoritePlayers", async (req, res, next) => {
   }
 });
 
-/**
- * This path returns the favorites players that were saved by the logged-in user
- */
+/* This path returns the favorites players that were saved by the logged-in user*/
 router.get("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
@@ -53,9 +52,9 @@ router.get("/favoritePlayers", async (req, res, next) => {
   }
 });
 
-/**
- * This path gets body with playerId and save this player in the favorites list of the logged-in user
- */
+// ------------------- Teams -----------------------
+
+/* This path gets body with playerId and save this player in the favorites list of the logged-in user*/
  router.post("/favoriteTeams", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
@@ -67,9 +66,7 @@ router.get("/favoritePlayers", async (req, res, next) => {
   }
 });
 
-/**
- * This path returns the favorites players that were saved by the logged-in user
- */
+/*This path returns the favorites players that were saved by the logged-in user*/
 router.get("/favoriteTeams", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
@@ -83,5 +80,37 @@ router.get("/favoriteTeams", async (req, res, next) => {
   }
 });
 
+// ------------------- MATCHES -----------------------
+/* This path gets body with playerId and save this player in the favorites list of the logged-in user*/
+router.post("/favoriteMatches", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const match_id = req.body.matchId;
+    await game_utils.markMatchAsFavorite(user_id, match_id);
+    res.status(201).send("The Match successfully saved as favorite");
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*This path returns the favorites players that were saved by the logged-in user*/
+router.get("/favoriteMatches", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const match_ids = await users_utils.getFavoriteMatches(user_id);
+    let match_ids_array = [];
+    match_ids.map((element) => match_ids_array.push(element.matchId)); //extracting the players ids into array
+    let results = await game_utils.getMatchesInfo(match_ids_array);
+    results = results.filter((element) => {
+      if(element[0] !== undefined){
+        return !game_utils.isPastGame(element[0]);
+      }
+      return false;
+    });
+    res.status(200).send(results);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
