@@ -55,6 +55,7 @@ const league = require("./routes/league");
 const teams = require("./routes/teams");
 const players = require("./routes/player");
 const coaches = require("./routes/coach");
+const { nextTick } = require("process");
 //#endregion
 
 //#region cookie middleware
@@ -74,9 +75,31 @@ app.use(function (req, res, next) {
 });
 //#endregion
 
+app.get("/", async (req,res,next)=> {
+  //refirect path to /league/getDetails
+  try{
+    res.redirect('/league/getDetails');
+  }
+  catch(erro){
+    next(error)
+  }
+})
 // ----> For cheking that our server is alive
-app.get("/alive", (req, res) => res.send("I'm alive"));
-app.get("/",(req,res)=> {})
+app.get("/alive", (req, res,next) => res.send("I'm alive"));
+
+app.get("/About", async (req, res,next)=>{
+  // TODO: add text inforamtion and link to all prev projects
+  let object = {
+    text: "dsfsdfdsfsdf",
+    links:[
+      'link1',
+      'link2',
+    ],
+  };
+  res.send(object);
+});
+
+
 
 // Routings
 app.use("/", auth);
