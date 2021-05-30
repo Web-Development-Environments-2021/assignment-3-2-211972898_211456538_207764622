@@ -43,6 +43,9 @@ router.post("/createMatchCalendar", async (req, res, next) => {
     await DButils.execQuery(
       `INSERT INTO dbo.matchCalendar (matchId) VALUES ('${req.body.matchId}')`    
       );
+    matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`) 
+    await DButils.execQuery(
+      `UPDATE dbo.match SET calendarId='${matchCalendarId[0]["matchCalendarId"]}' WHERE matchId='${req.body.matchId}'`);
     res.status(201).send("Match calendar created");
   } catch (error) {
     next(error);
