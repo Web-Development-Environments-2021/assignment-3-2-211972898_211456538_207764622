@@ -7,8 +7,8 @@ GO
 CREATE TABLE dbo.users
 (
     userId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
-    username [NVARCHAR](8) NOT NULL,
-    password [NVARCHAR](10) NOT NULL
+    username [NVARCHAR](8) NOT NULL UNIQUE,
+    password [NVARCHAR](300) NOT NULL
     -- specify more columns here
 );
 GO
