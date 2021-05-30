@@ -1,6 +1,6 @@
 const axios = require("axios");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
-require("dotenv").config({path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'});
+require("dotenv").config({path:'./../.env'});
 // const TEAM_ID = "85";
 
 async function getPlayerIdsByTeam(team_id) {

@@ -77,6 +77,7 @@ app.use(function (req, res, next) {
 // ----> For cheking that our server is alive
 app.get("/alive", (req, res) => res.send("I'm alive"));
 app.get("/",(req,res)=> {})
+
 // Routings
 app.use("/users", users);
 app.use("/league", league);
@@ -84,6 +85,7 @@ app.use("/teams", teams);
 app.use("/players", players);
 app.use("/coaches",coaches);
 
+// Error handler
 app.use(function (err, req, res, next) {
   console.error(err);
   res.status(err.status || 500).send(err.message);
