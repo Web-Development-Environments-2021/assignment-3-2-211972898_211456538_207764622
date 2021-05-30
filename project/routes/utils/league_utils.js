@@ -1,8 +1,12 @@
+/* ------ Import libraries & set environment variables ------*/
 const axios = require("axios");
 const LEAGUE_ID = 271;
 const DButils = require("./DButils");
 require("dotenv").config({path:'./../.env'});
 
+/* -------- Scope Function -------- */
+
+// get all (name,seasonName,currentStageName) about the league
 async function getLeagueDetails() {
   const league = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/leagues/${LEAGUE_ID}`,
@@ -25,10 +29,10 @@ async function getLeagueDetails() {
     league_name: league.data.data.name,
     current_season_name: league.data.data.season.data.name,
     current_stage_name: stage.data.data.name,
-    // next game details should come from DB
   };
 }
 
+// create distance in int format from date
 function distanceFromDate(game) {
   if(game == undefined) return -1;
   let gameDate = game.date; 
@@ -51,7 +55,7 @@ function distanceFromDate(game) {
   return x-y;
 }
 
-
+// get The closest game from database to this date
 async function getClosestGame(){
   /* chose all games and order them by date */
   const games = await DButils.execQuery(`SELECT * FROM dbo.match`);
@@ -64,5 +68,6 @@ async function getClosestGame(){
   return lastGame;
 }
 
+/* -------- Export Function -------- */
 exports.getLeagueDetails = getLeagueDetails;
 exports.getClosestGame = getClosestGame;

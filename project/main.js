@@ -2,7 +2,6 @@
 const DButils = require("./routes/utils/DButils");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
-// {path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'}
 require("dotenv").config({path:'./../.env'});
 //#endregion
 //#region express configures
@@ -11,8 +10,8 @@ var path = require("path");
 const session = require("client-sessions");
 var logger = require("morgan");
 var cors = require("cors");
-// console.log(process.env);
-// console.log(process.env.COOKIE_SECRET,'here');
+
+
 var app = express();
 app.use(logger("dev")); //logger
 app.use(express.json()); // parse application/json
@@ -85,12 +84,11 @@ app.get("/alive", (req, res,next) => res.send("I'm alive"));
 
 // About Page
 app.get("/About", async (req, res,next)=>{
-  // TODO: Add project link information
   let object = {
-    text: "This is the project Guy Ron And Noam Build and here some link about the porject progress in the last couple of weeks",
+    text: "This is the project Guy Ron And Noam Built and here some link about the porject progress in the last couple of weeks",
     links:[
-      'link1',
-      'link2',
+      'https://web-development-environments-2021.github.io/Assignment2_211456538_211972898_207764622/',
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // SIGN if you have been ricked roilied [v/x]
     ],
   };
   res.send(object);
@@ -98,7 +96,7 @@ app.get("/About", async (req, res,next)=>{
 
 // Search 
 app.get("/Search",async (req, res,next)=>{
-  //TODO: try to deside in front or back and how to mannage it
+  //TODO:(IN FRONT) try to deside in front or back and how to mannage it
   try{
     const query_type = req.query.type || 'team'; // the table we work on
     const query_value = req.query.query || ''; // the search string we get from user 
@@ -171,9 +169,7 @@ const server = app.listen(port, () => {
 
 // on server "End connection"(SINIT) close connection
 process.on("SIGINT", function () {
-  if (server) {
-    server.close(() => console.log("server closed"));
-  }
+  if (server) {server.close(() => console.log("server closed"));}
 });
 
 

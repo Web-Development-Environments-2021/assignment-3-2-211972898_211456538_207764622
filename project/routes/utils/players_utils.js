@@ -1,22 +1,25 @@
+/* ------ Import libraries & set environment variables ------*/
 const axios = require("axios");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
 require("dotenv").config({path:'./../.env'});
-// const TEAM_ID = "85";
 
+/* ----------------- Scope Function ---------------- */
+
+// Get player from MONK BY team_ID
 async function getPlayerIdsByTeam(team_id) {
   let player_ids_list = [];
+  //get infro from outer source
   const team = await axios.get(`${api_domain}/teams/${team_id}`, {
     params: {
       include: "squad",
       api_token: process.env.api_token,
     },
   });
-  team.data.data.squad.data.map((player) =>
-    player_ids_list.push(player.player_id)
-  );
+  team.data.data.squad.data.map((player) =>player_ids_list.push(player.player_id));
   return player_ids_list;
 }
 
+// get player info from MONK by team_ID
 async function getPlayersInfo(players_ids_list) {
   let promises = [];
   players_ids_list.map((id) =>
@@ -33,8 +36,7 @@ async function getPlayersInfo(players_ids_list) {
   return extractRelevantPlayerData(players_info);
 }
 
-
-
+// Extract Relevant Player Data by player_ID
 function extractRelevantPlayerData(players_info) {
   return players_info.map((player_info) => {
     if (player_info.data.data === undefined){
@@ -51,12 +53,14 @@ function extractRelevantPlayerData(players_info) {
   });
 }
 
+// Get Players By Team by player_ID
 async function getPlayersByTeam(team_id) {
   let player_ids_list = await getPlayerIdsByTeam(team_id);
   let players_info = await getPlayersInfo(player_ids_list);
   return players_info;
 }
 
+//Get All Player Info By player_Id
 async function getAllPlayerInfoById(playerId){
   const player = await axios.get(`${api_domain}/players/${playerId}`, {
     params: {
@@ -80,6 +84,7 @@ async function getAllPlayerInfoById(playerId){
   };
 }
 
+/* ----------------- Export  ---------------- */
 exports.getPlayersByTeam = getPlayersByTeam;
 exports.getPlayersInfo = getPlayersInfo;
 exports.getAllPlayerInfoById = getAllPlayerInfoById;

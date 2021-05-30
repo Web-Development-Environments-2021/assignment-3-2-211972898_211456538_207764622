@@ -36,12 +36,6 @@ function isPastGame(game){
 
 }
 
-async function markMatchAsFavorite(user_id, match_id){
-    await DButils.execQuery(
-        `insert into dbo.FavoriteMatches values ('${user_id}',${match_id})`
-    );
-}
-
 async function getMatchesInfo(matches_ids_list) {
     let promises = [];
     matches_ids_list.map((id) =>promises.push( DButils.execQuery(`SELECT * FROM dbo.match WHERE matchId = '${id}'`)));
@@ -52,5 +46,4 @@ async function getMatchesInfo(matches_ids_list) {
   
 
 exports.isPastGame = isPastGame;
-exports.markMatchAsFavorite = markMatchAsFavorite;
 exports.getMatchesInfo = getMatchesInfo;
