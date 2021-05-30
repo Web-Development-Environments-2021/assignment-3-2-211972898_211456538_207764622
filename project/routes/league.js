@@ -48,7 +48,7 @@ router.post("/addMatch", async (req, res, next) => {
     // add the new game
     // TODO: Validate all of the details so the DB wont stuck
     await DButils.execQuery(
-      `INSERT INTO dbo.match (date, hour, homeTeamId, awayTeamId, stadium) VALUES ('${req.body.date}', '${req.body.hour}','${req.body.homeTeamId}','${req.body.awayTeamId}','${req.body.stadium}')`    );
+      `INSERT INTO dbo.match (date, hour, homeTeamId, awayTeamId, stadium,refereeId) VALUES ('${req.body.date}', '${req.body.hour}','${req.body.homeTeamId}','${req.body.awayTeamId}','${req.body.stadium}','${req.body.refereeId}')`    );
     res.status(201).send("Match added");
   } catch (error) {
     next(error);
@@ -94,6 +94,19 @@ router.post("/addEventToMatchCalendar", async (req, res, next) => {
       `INSERT INTO dbo.calendarEvents (calendarId,description) VALUES ('${matchCalendarId[0]["matchCalendarId"]}','${req.body.description}')`    
       );
     res.status(201).send("Event added to match calendar");
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/addReferee", async (req, res, next) => {
+  try {
+    // add new referee to sys
+    // TODO: Validate all of the details so the DB wont stuck
+    await DButils.execQuery(
+      `INSERT INTO dbo.referee (fullname) VALUES ('${req.body.fullname}')`    
+    );
+    res.status(201).send("Referee created");
   } catch (error) {
     next(error);
   }
