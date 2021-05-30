@@ -99,6 +99,29 @@ app.get("/About", async (req, res,next)=>{
   res.send(object);
 });
 
+app.get("/Search",async (req, res,next)=>{
+  try{
+    const type = req.query.In || 'team';
+    const queryValue = req.query.Value || '';
+    const order = req.query.orderBy || 'ASC';
+    const game_position =  req.query.GamePosition|| true;
+    const team_name = req.query.team_name || '';
+    let table = type;
+    let query =`SELECT * FROM ${table} ORDER BY ${order}`
+    if(type == 'player' || type == 'coach'){
+      query = `SELECT FROM ${type} WHERE position=${game_position} OR ${game_position} = TRUE`;
+    }
+    data = await DButils.execQuery(`SELECT * FROM ${table} WHERE teamName=${team_name} OR gamePosition=${game_position} ORDER BY ${order}`);
+    data = data.filter((row)=>{row.name.includes(queryValue);});
+    res.send(data);
+  }
+  catch(error){
+    next(error);
+  }
+  
+});
+
+
 // Routings
 app.use("/", auth);
 app.use("/users", users);
@@ -122,3 +145,7 @@ process.on("SIGINT", function () {
     server.close(() => console.log("server closed"));
   }
 });
+
+
+
+
