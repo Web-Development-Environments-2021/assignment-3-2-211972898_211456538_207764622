@@ -1,4 +1,4 @@
-require("dotenv").config({path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'});
+require("dotenv").config({path:'./../.env'});
 const sql = require("mssql");
 
 const config = {

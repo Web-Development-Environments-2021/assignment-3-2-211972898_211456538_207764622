@@ -3,7 +3,7 @@ const DButils = require("./routes/utils/DButils");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
 // {path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'}
-require("dotenv").config({path:'C:/Users/Ron/Documents/Github/assignment-3-2-211972898_211456538_207764622/.env'});
+require("dotenv").config({path:'./../.env'});
 //#endregion
 //#region express configures
 var express = require("express");
@@ -11,8 +11,8 @@ var path = require("path");
 const session = require("client-sessions");
 var logger = require("morgan");
 var cors = require("cors");
-//console.log(process.env);
-// console.log(env.COOKIE_SECRET);
+// console.log(process.env);
+// console.log(process.env.COOKIE_SECRET,'here');
 var app = express();
 app.use(logger("dev")); //logger
 app.use(express.json()); // parse application/json
@@ -33,11 +33,11 @@ app.use(express.static(path.join(__dirname, "public"))); //To serve static files
 // DO NOT UNCOMMENT THIS SHIT
 // middleware to serve all the needed static files under the dist directory - loaded from the index.html file
 // https://expressjs.com/en/starter/static-files.html
-// app.use(express.static("dist"));
+app.use(express.static("dist"));
 
-// app.get("/api", (req, res) => {
-//   res.sendFile(__dirname + "/index.html");
-// });
+app.get("/api", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
 const corsConfig = {
   origin: true,
@@ -76,15 +76,13 @@ app.use(function (req, res, next) {
 
 // ----> For cheking that our server is alive
 app.get("/alive", (req, res) => res.send("I'm alive"));
-app.get("/",(req,res)=> {
-})
+app.get("/",(req,res)=> {})
 // Routings
 app.use("/users", users);
 app.use("/league", league);
 app.use("/teams", teams);
 app.use("/players", players);
 app.use("/coaches",coaches);
-app.use(auth);
 
 app.use(function (err, req, res, next) {
   console.error(err);
