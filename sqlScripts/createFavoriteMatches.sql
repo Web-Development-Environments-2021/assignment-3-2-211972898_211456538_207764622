@@ -7,7 +7,10 @@ GO
 CREATE TABLE dbo.FavoriteMatches
 (
     FavoriteMatchesrRecordId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
-    user_id INT NOT NULL,
+    user_id INT NOT NULL
+    CONSTRAINT FK_userToFavMatches
+    FOREIGN KEY (user_id)
+    REFERENCES dbo.users(user_id),
     matchId INT NOT NULL
     CONSTRAINT FK_matchToFavMatches
     FOREIGN KEY (matchId)

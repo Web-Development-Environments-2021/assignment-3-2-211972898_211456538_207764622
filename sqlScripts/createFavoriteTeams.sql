@@ -7,7 +7,10 @@ GO
 CREATE TABLE dbo.FavoriteTeams
 (
     FavoriteTeamRecordId INT NOT NULL IDENTITY(1,1) PRIMARY KEY, -- primary key column
-    user_id INT NOT NULL,
+    user_id INT NOT NULL
+    CONSTRAINT FK_userToFavTeams
+    FOREIGN KEY (user_id)
+    REFERENCES dbo.users(user_id),
     teamId INT NOT NULL
     -- specify more columns here
 );
