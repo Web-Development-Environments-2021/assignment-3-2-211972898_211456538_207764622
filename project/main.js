@@ -95,7 +95,7 @@ app.get("/About", async (req, res,next)=>{
 });
 
 // Search 
-app.get("/Search",async (req, res,next)=>{
+app.get("/search",async (req, res,next)=>{
   //TODO:(IN FRONT) try to deside in front or back and how to mannage it
   try{
     const query_type = req.query.type || 'team'; // the table we work on
