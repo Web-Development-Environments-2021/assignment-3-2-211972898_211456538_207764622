@@ -36,6 +36,11 @@ router.get("/getDetails", async (req, res, next) => {
 //Get- Get CurrentLeuge Matches
 router.get("/currentLeagueMatches", async (req, res, next) => {
   try {
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
     let category = req.query.category || 'date'; 
     let order = req.query.orderBy || 'ASC';
     console.log(category,order);
@@ -47,6 +52,11 @@ router.get("/currentLeagueMatches", async (req, res, next) => {
 router.post("/addMatch", async (req, res, next) => {
   try {
     // get all info from body
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
     const date = req.body.date;
     const time = req.body.hour;
     const homeTeamId = req.body.homeTeamId;
@@ -77,6 +87,11 @@ router.post("/addMatch", async (req, res, next) => {
 //Post- Add Match Result
 router.post("/addMatchResult", async (req, res, next) => {
   try {
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
     const home_goal = req.body.homeGoals;
     const away_goal = req.body.awayGoals;
     const match_id = req.body.matchId;
@@ -91,6 +106,11 @@ router.post("/addMatchResult", async (req, res, next) => {
 //Post- Crate Match Calendar
 router.post("/createMatchCalendar", async (req, res, next) => {
   try {
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
     await DButils.execQuery(`INSERT INTO dbo.matchCalendar (matchId) VALUES ('${req.body.matchId}')`);
     let matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`) 
     if(!matchCalendarId || matchCalendarId.length == 0){throw new Error('Invalid MatchID')}
@@ -102,6 +122,11 @@ router.post("/createMatchCalendar", async (req, res, next) => {
 //Post- Add Event To Match calendar
 router.post("/addEventToMatchCalendar", async (req, res, next) => {
   try {
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
     // first we find the matchCalendarId
     let matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`)
     if(!matchCalendarId || matchCalendarId.length == 0){throw new Error('Invalid MatchID')}
@@ -113,6 +138,11 @@ router.post("/addEventToMatchCalendar", async (req, res, next) => {
 //Post- Add Refereee
 router.post("/addReferee", async (req, res, next) => {
   try {
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
     const full_name = req.body.fullname;
     if(typeof(full_name) !== 'string'){throw new Error('Full name have to be a string');}
     await DButils.execQuery(`INSERT INTO dbo.referee (fullname) VALUES ('${full_name}')`);
