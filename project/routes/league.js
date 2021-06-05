@@ -15,18 +15,19 @@ router.get("/getDetails", async (req, res, next) => {
   try {
     // get all information needed from utils
     const league_details = await league_utils.getLeagueDetails();
+    //console.log(league_details);
     const closest_game = await league_utils.getClosestGame();
     const user_id = req.session.user_id;
-    let three_favorit_game = [];
+    let three_favorite_games = [];
     if(user_id !== undefined){
       const match_ids = await users_utils.getFavoriteMatches(user_id);
       let match_ids_array = [];
       match_ids.map((element) => match_ids_array.push(element.matchId)); //extracting the players ids into array
       let results = await game_utils.getMatchesInfo(match_ids_array);
       results = results.filter((element) => {if(element[0] !== undefined){return !game_utils.isPastGame(element[0]);}return false;});
-      for(let i = 0; i < results.length && i < 3 ; i++){three_favorit_game.push(results[i])}
+      for(let i = 0; i < results.length && i < 3 ; i++){three_favorite_games.push(results[i])}
     }
-    const results = {league_details,closest_game,three_favorit_game}
+    const results = {league_details,closest_game,three_favorite_games}
     res.send(results);
   } catch (error) {
     next(error);
@@ -36,17 +37,42 @@ router.get("/getDetails", async (req, res, next) => {
 //Get- Get CurrentLeuge Matches
 router.get("/currentLeagueMatches", async (req, res, next) => {
   try {
-    userId = req.session.user_id;
-    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
-    if (userId!==adminUserId){
-      throw new Error("Player Id should be a number");
+    const games = await DButils.execQuery(
+      `SELECT * FROM dbo.match`
+    );
+    let pastGames = [];
+    let upcomingGames = [];
+    for(i = 0;i<games.length;i++){
+      if(game_utils.isPastGame(games[i])){
+        // here we need to find the calendar
+        if (games[i]["calendarId"] != null){
+          //console.log(games[i]);
+          const events = await DButils.execQuery(
+            `SELECT description FROM dbo.calendarEvents WHERE calendarId='${games[i]["calendarId"]}'`
+          );
+          games[i]["calendarEvents"] = events;
+          pastGames.push(games[i]);
+        }
+      }
+      else {
+        console.log(games[i]);
+        delete games[i]["homeGoals"];
+        delete games[i]["awayGoals"];
+        delete games[i]["calendarId"];
+        upcomingGames.push(games[i]);
+      }
     }
-    let category = req.query.category || 'date'; 
-    let order = req.query.orderBy || 'ASC';
-    console.log(category,order);
-    res.send(await DButils.execQuery(`SELECT * FROM match ORDER BY ${category} ${order}`));
-  } catch (error) {next(error);}
+
+    const team_details=[pastGames,upcomingGames];
+    res.send(team_details);
+  } catch (error) {
+    next(error);
+  }
 });
+    // let category = req.query.category || 'date'; 
+    // let order = req.query.orderBy || 'ASC';
+    // console.log(category,order);
+    // res.send(await DButils.execQuery(`SELECT * FROM match ORDER BY ${category} ${order}`)); catch (error) {next(error);}
 
 //Post- ADD Matches
 router.post("/addMatch", async (req, res, next) => {
