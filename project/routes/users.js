@@ -27,7 +27,10 @@ router.post("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const player_id = req.body.playerId;
-    if(typeof(user_id) !='number' || typeof(player_id) !='number'){throw new Error('Id should be a number');}
+    if(typeof(user_id) !='number' || typeof(player_id) !='number'){res.status(400).send('one of the arguments is not specified correctly.');}
+    const users = await DButils.execQuery("SELECT playerId FROM FavoritePlayers WHERE user_id =" + user_id); // select all user from table
+    if (users.find((x) => x.playerId === player_id)) // validate players is uniqe
+      throw { status: 409, message: "the player is already marked as favorite by the user."};
     await users_utils.markPlayerAsFavorite(user_id, player_id);
     res.status(201).send("The player successfully saved as favorite");
   } catch (error) {next(error);}
@@ -38,7 +41,6 @@ router.get("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const player_ids = await users_utils.getFavoritePlayers(user_id);
-    if(typeof(user_id) !='number' || typeof(player_ids) !='number'){throw new Error('Id should be a number');}
     let player_ids_array = [];
     player_ids.map((element) => player_ids_array.push(element.playerId)); //extracting the players ids into array
     const results = await players_utils.getPlayersInfo(player_ids_array);
@@ -53,7 +55,10 @@ router.get("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const team_id = req.body.teamId;
-    if(typeof(user_id) !='number' || typeof(team_id) !='number'){throw new Error('Id should be a number');}
+    if(typeof(user_id) !='number' || typeof(team_id) !='number'){res.status(400).send('one of the arguments is not specified correctly.');}
+    const teams = await DButils.execQuery("SELECT teamId FROM FavoriteTeams WHERE user_id =" + user_id); // select all user from table
+    if (teams.find((x) => x.teamId === team_id)) // validate teams is uniqe
+      throw { status: 409, message: "the team already marked as favorite by the user."};
     await users_utils.markTeamAsFavorite(user_id, team_id);
     res.status(201).send("The Team successfully saved as favorite");
   } catch (error) {next(error);}
@@ -64,7 +69,6 @@ router.get("/favoriteTeams", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const team_ids = await users_utils.getFavoriteTeams(user_id);
-    if(typeof(user_id) !='number' || typeof(team_id) !='number'){throw new Error('Id should be a number');}
     let team_ids_array = [];
     team_ids.map((element) => team_ids_array.push(element.teamId)); //extracting the players ids into array
     const results = await team_utils.getTeamsInfo(team_ids_array);
@@ -78,8 +82,11 @@ router.post("/favoriteMatches", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const match_id = req.body.matchId;
-    if(typeof(user_id) !='number' || typeof(match_id) !='number'){throw new Error('Id should be a number');}
-    await game_utils.markMatchAsFavorite(user_id, match_id);
+    if(typeof(user_id) !='number' || typeof(match_id) !='number'){res.status(400).send('one of the arguments is not specified correctly.');}
+    const matches = await DButils.execQuery("SELECT matchId FROM FavoriteMatches WHERE user_id =" + user_id); // select all user from table
+    if (matches.find((x) => x.matchId === match_id)) // validate match is uniqe
+      throw { status: 409, message: "the team already marked as favorite by the user."};
+    await users_utils.markMatchAsFavorite(user_id, match_id);
     res.status(201).send("The Match successfully saved as favorite");
   } catch (error) {next(error);}
 });
@@ -88,7 +95,6 @@ router.post("/favoriteMatches", async (req, res, next) => {
 router.get("/favoriteMatches", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
-    if(typeof(user_id) !='number'){throw new Error('Id should be a number');}
     const match_ids = await users_utils.getFavoriteMatches(user_id);
     let match_ids_array = [];
     match_ids.map((element) => match_ids_array.push(element.matchId)); //extracting the players ids into array
