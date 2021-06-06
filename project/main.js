@@ -53,6 +53,7 @@ const league = require("./routes/league");
 const teams = require("./routes/teams");
 const players = require("./routes/player");
 const coaches = require("./routes/coach");
+const search = require("./routes/search");
 const { nextTick } = require("process");
 //#endregion
 
@@ -155,6 +156,7 @@ app.use("/league", league);
 app.use("/teams", teams);
 app.use("/players", players);
 app.use("/coaches",coaches);
+app.use("/search", search);
 
 // Global-Error handler
 app.use(function (err, req, res, next) {

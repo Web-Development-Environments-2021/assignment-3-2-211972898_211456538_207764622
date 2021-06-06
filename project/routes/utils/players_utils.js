@@ -1,6 +1,7 @@
 /* ------ Import libraries & set environment variables ------*/
 const axios = require("axios");
 const api_domain = "https://soccer.sportmonks.com/api/v2.0";
+const LEAGUE_ID = 271
 require("dotenv").config({path:'./../.env'});
 
 /* ----------------- Scope Function ---------------- */
@@ -84,7 +85,155 @@ async function getAllPlayerInfoById(playerId){
   };
 }
 
+// ---------------------  Search section   -------------------------
+
+// get a players by name
+async function getPlayerByName(playerName){
+  try{
+      let players = [];
+      const results = await axios.get(`${api_domain}/players/search/${playerName}`, {
+          params:{
+              include: "team.league, position",
+              api_token: process.env.api_token,
+          },
+      });
+      results.data.data.map((player)=>{
+        if (player.position != null && player.team_id != null){
+          if(player.team != null){
+              if(player.team.data != null){
+                  if(player.team.data.league != null){
+                      if (player.team.data.league.data.id == LEAGUE_ID){
+                          if (player.fullname.includes(playerName)){
+                              addPlayer(players, player);
+                          }
+                      }
+                  }
+              }
+          }
+      }
+      });
+      return players;
+  }
+  catch{
+      return "There is a problem"
+  }
+}
+
+// get players by name and position
+async function GetPlayerByNameAndPos(playerName, pos){
+  try{
+      let players = [];
+      const results = await axios.get(`${api_domain}/players/search/${playerName}`, {
+          params:{
+              include: "team.league, position",
+              api_token: process.env.api_token,
+          },
+      });
+      results.data.data.map((player)=>{
+          if (player.team_id != null && player.position != null){
+              if(player.team != null){
+                  if(player.team.data != null){
+                      if(player.team.data.league != null){
+                          playerPos = player.position.data.name;
+                          if (player.team.data.league.data.id == LEAGUE_ID && playerPos == pos){
+                              if (player.fullname.includes(playerName)){
+                                addPlayer(players, player);
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      });
+      return players;
+  }
+  catch{
+      return "There is a problem"
+  }
+}
+
+// get players by name and Team
+async function GetPlayerByNameAndTeam(PlayerName, TeamName){
+  try{
+      let players = [];
+      const results = await axios.get(`${api_domain}/players/search/${PlayerName}`, {
+          params:{
+              include: "team.league, position",
+              api_token: process.env.api_token,
+          },
+      });
+      results.data.data.map((player)=>{
+          if (player.team_id != null && player.position != null){
+              if(player.team != null){
+                  if(player.team.data != null){
+                      if(player.team.data.league != null){
+                          cur_player_team = player.team.data.name;
+                          if (player.team.data.league.data.id == LEAGUE_ID && cur_player_team == TeamName){
+                              if (player.fullname.includes(PlayerName)){
+                                  addPlayer(players, player);
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      });
+      return players;
+  }
+  catch{
+      return "There is a problem"
+  }
+}
+
+// get a team by their name
+async function GetTeamByName(TeamName){
+  try{
+      let teams = [];
+      const results = await axios.get(`${api_domain}/teams/search/${TeamName}`, {
+          params:{
+              include: "league",
+              api_token: process.env.api_token,
+          },
+      });
+      results.data.data.map((team)=>{
+          if(team.league != null){
+              if(team.league.data != null){
+                  if(team.league.data.id == LEAGUE_ID){
+                      teams.push({
+                          team_id: team.id,
+                          team_name: team.name,
+                          team_logo: team.logo_path
+                      });
+                  }
+              }
+          }
+      });
+      return teams;
+  }
+  catch{
+      return "There is a problem"
+  }
+}
+
+function addPlayer(list, p1){
+  const pos = p1.position.data.name;
+  list.push(
+      {
+          player_id: p1.player_id,
+          player_full_name: p1.fullname,
+          player_team_name: p1.team.data.name,
+          player_image: p1.image_path,
+          player_position: pos         
+  });
+}
+
 /* ----------------- Export  ---------------- */
 exports.getPlayersByTeam = getPlayersByTeam;
 exports.getPlayersInfo = getPlayersInfo;
 exports.getAllPlayerInfoById = getAllPlayerInfoById;
+
+//Search section
+exports.getPlayerByName = getPlayerByName;
+exports.GetPlayerByNameAndPos =GetPlayerByNameAndPos;
+exports.GetPlayerByNameAndTeam = GetPlayerByNameAndTeam;
+exports.GetTeamByName = GetTeamByName;
