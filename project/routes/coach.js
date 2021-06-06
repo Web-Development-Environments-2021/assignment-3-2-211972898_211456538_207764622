@@ -10,7 +10,17 @@ router.get("/coachFullDetails/:coachId", async (req, res, next) => {
   try {
     const coach_details = await coach_utils.getAllCoachInfoById(req.params.coachId);
     res.send(coach_details);
-  } catch (error) {next(error);}
+  } catch (error) 
+  {
+    try{
+      throw {status:"404", message:"Coach not found(try another ID)"}
+    }
+    catch(error)
+    {
+      next(error);
+    }
+  }
+
 });
 
 
