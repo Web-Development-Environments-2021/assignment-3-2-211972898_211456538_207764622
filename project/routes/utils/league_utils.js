@@ -17,6 +17,7 @@ async function getLeagueDetails() {
       },
     }
   );
+  if(league.data.data.current_stage_id == null) { return 0;}  // status: 404, message: "League stage is null"};
   const stage = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/stages/${league.data.data.current_stage_id}`,
     {
@@ -30,6 +31,7 @@ async function getLeagueDetails() {
     current_season_name: league.data.data.season.data.name,
     current_stage_name: stage.data.data.name,
   };
+  
 }
 
 // create distance in int format from date

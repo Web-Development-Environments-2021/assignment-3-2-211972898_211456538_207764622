@@ -27,7 +27,7 @@ router.post("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const player_id = req.body.playerId;
-    if(typeof(user_id) !='number' || typeof(player_id) !='number'){res.status(400).send('one of the arguments is not specified correctly.');}
+    if(typeof(user_id) !='number' || typeof(player_id) !='number') {throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
     const users = await DButils.execQuery("SELECT playerId FROM FavoritePlayers WHERE user_id =" + user_id); // select all user from table
     if (users.find((x) => x.playerId === player_id)) // validate players is uniqe
       throw { status: 409, message: "the player is already marked as favorite by the user."};
@@ -55,7 +55,7 @@ router.get("/favoritePlayers", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const team_id = req.body.teamId;
-    if(typeof(user_id) !='number' || typeof(team_id) !='number'){res.status(400).send('one of the arguments is not specified correctly.');}
+    if(typeof(user_id) !='number' || typeof(team_id) !='number'){throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
     const teams = await DButils.execQuery("SELECT teamId FROM FavoriteTeams WHERE user_id =" + user_id); // select all user from table
     if (teams.find((x) => x.teamId === team_id)) // validate teams is uniqe
       throw { status: 409, message: "the team already marked as favorite by the user."};
@@ -82,7 +82,7 @@ router.post("/favoriteMatches", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const match_id = req.body.matchId;
-    if(typeof(user_id) !='number' || typeof(match_id) !='number'){res.status(400).send('one of the arguments is not specified correctly.');}
+    if(typeof(user_id) !='number' || typeof(match_id) !='number'){throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
     const matches = await DButils.execQuery("SELECT matchId FROM FavoriteMatches WHERE user_id =" + user_id); // select all user from table
     if (matches.find((x) => x.matchId === match_id)) // validate match is uniqe
       throw { status: 409, message: "the team already marked as favorite by the user."};

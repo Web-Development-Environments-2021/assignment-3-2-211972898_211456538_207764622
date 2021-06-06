@@ -15,20 +15,23 @@ router.get("/getDetails", async (req, res, next) => {
   try {
     // get all information needed from utils
     const league_details = await league_utils.getLeagueDetails();
-    //console.log(league_details);
-    const closest_game = await league_utils.getClosestGame();
-    const user_id = req.session.user_id;
-    let three_favorite_games = [];
-    if(user_id !== undefined){
-      const match_ids = await users_utils.getFavoriteMatches(user_id);
-      let match_ids_array = [];
-      match_ids.map((element) => match_ids_array.push(element.matchId)); //extracting the players ids into array
-      let results = await game_utils.getMatchesInfo(match_ids_array);
-      results = results.filter((element) => {if(element[0] !== undefined){return !game_utils.isPastGame(element[0]);}return false;});
-      for(let i = 0; i < results.length && i < 3 ; i++){three_favorite_games.push(results[i])}
+    if(league_details == 0) { res.send([]);}
+    else
+    {
+      const closest_game = await league_utils.getClosestGame();
+      const user_id = req.session.user_id;
+      let three_favorite_games = [];
+      if(user_id !== undefined){
+        const match_ids = await users_utils.getFavoriteMatches(user_id);
+        let match_ids_array = [];
+        match_ids.map((element) => match_ids_array.push(element.matchId)); //extracting the players ids into array
+        let results = await game_utils.getMatchesInfo(match_ids_array);
+        results = results.filter((element) => {if(element[0] !== undefined){return !game_utils.isPastGame(element[0]);}return false;});
+        for(let i = 0; i < results.length && i < 3 ; i++){three_favorite_games.push(results[i])}
+      }
+      const results = {league_details,closest_game,three_favorite_games}
+      res.send(results);
     }
-    const results = {league_details,closest_game,three_favorite_games}
-    res.send(results);
   } catch (error) {
     next(error);
   }
@@ -81,7 +84,7 @@ router.post("/addMatch", async (req, res, next) => {
     userId = req.session.user_id;
     const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
     if (userId!==adminUserId){
-      throw new Error("Player Id should be a number");
+      throw { status: 403, message: "Forbidden"};
     }
     const date = req.body.date;
     const time = req.body.hour;
@@ -96,15 +99,15 @@ router.post("/addMatch", async (req, res, next) => {
     let input_validition = time_split.length == 3 && time_split[0].length == 2 && parseInt(time_split[0]) >= 0 && parseInt(time_split[0]) < 24; //  0<= match_hour <24
     input_validition &= time_split[1].length == 2 && parseInt(time_split[1]) >= 0 && parseInt(time_split[1]) < 60; //  0<= match_minute < 60
     input_validition &= time_split[2].length == 2 && parseInt(time_split[2]) >= 0 && parseInt(time_split[2]) < 60; //  0<= match_minute < 60
-    if(!input_validition){throw new Error('Invalid detail about Time')}
+    if(!input_validition){ throw { status: 400, message: "Invalid detail about Time"};}
     //Date
     input_validition &= date_split.length == 3 && date_split[0].length == 4 && parseInt(time_split[0]) >= 0; //  0<= match_year
     input_validition &= time_split[1].length == 2 && parseInt(time_split[1]) >= 0 && parseInt(time_split[1]) <= 12; //  0<= match_month <= 12
     input_validition &= time_split[2].length == 2 && parseInt(time_split[2]) >= 0 && parseInt(time_split[2]) <= 31; //  0<= match_day <= 31
     const isRefreeInDB = await DButils.execQuery(`SELECT * FROM referee WHERE refereeId = ${referee}`);
-    if(!input_validition){throw new Error('Invalid detail about Date')}
+    if(!input_validition){ throw { status: 400, message: "Invalid detail about Date"};}
     else if(typeof(stadium) != 'string'){throw new Error('Invalid stadium value')}
-    else if(!isRefreeInDB || isRefreeInDB.length == 0){throw new Error('RefereeId not in DB')}
+    else if(!isRefreeInDB || isRefreeInDB.length == 0){throw { status: 400, message: "RefereeId not in DB"};}
     await DButils.execQuery(`INSERT INTO dbo.match (date, hour, homeTeamId, awayTeamId, stadium,refereeId) VALUES ('${date}', '${time}','${homeTeamId}','${awayTeamId}','${stadium}','${referee}')`);
     res.status(201).send("Match added");
   } catch (error) {next(error);}
