@@ -12,12 +12,14 @@ const { DateTimeOffset } = require("mssql");
 // Get- Team Full Details
 router.get("/teamFullDetails/:teamId", async (req, res, next) => {
   try {
+    const team_id = req.params.teamId;
+    // check if team_id is a number
+    let isnum = /^\d+$/.test(team_id);
+    if(!isnum){throw {status:409, message:'Team_id should be a number'};}
     const players_details = await players_utils.getPlayersByTeam(req.params.teamId);
     const coach_details = await coach_utils.getCoachInfoByTeam(req.params.teamId);
     //we should keep implementing team page.....
     // need to divide by past games and future games && also get to game event calendar and extract the info
-    const team_id = req.params.teamId;
-    if(typeof(team_id) !=='number'){throw new Error('Team_id should be a number');}
     const games = await DButils.execQuery(`SELECT * FROM dbo.match WHERE homeTeamId = '${team_id}' OR awayTeamId = '${team_id}'`);
     let pastGames = [];
     let upcomingGames = [];
