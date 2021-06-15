@@ -18,6 +18,26 @@ async function getTeamsInfo(teams_ids_list) {
     return extractRelevantTeamData(teams_info);
   }
 
+async function getTeamInfo(team_id) {
+  const team_info = await axios.get(`${api_domain}/teams/${team_id}`, {
+      params: {
+        api_token: process.env.api_token,
+      },
+  });
+  return extractTeamData(team_info);
+}
+
+function extractTeamData(team_info) {
+  if (team_info.data.data === undefined){
+    return undefined;
+  }
+  const { name, logo_path, founded } = team_info.data.data;
+  return {
+    name: name,
+    image: logo_path,
+    founded: founded,
+  };
+}
   
 function extractRelevantTeamData(teams_info) {
     return teams_info.map((team_info) => {
@@ -34,4 +54,5 @@ function extractRelevantTeamData(teams_info) {
   }
   
   
-  exports.getTeamsInfo = getTeamsInfo;
+exports.getTeamsInfo = getTeamsInfo
+exports.getTeamInfo = getTeamInfo;

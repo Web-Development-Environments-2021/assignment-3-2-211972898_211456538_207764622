@@ -5,6 +5,7 @@ const DButils = require("./utils/DButils");
 const players_utils = require("./utils/players_utils");
 const coach_utils = require("./utils/coach_utils");
 const game_utils = require("./utils/game_utils");
+const team_utils = require("./utils/team_utils");
 const { DateTimeOffset } = require("mssql");
 
 /* ----------------- ROUTING ---------------- */
@@ -16,6 +17,7 @@ router.get("/teamFullDetails/:teamId", async (req, res, next) => {
     // check if team_id is a number
     let isnum = /^\d+$/.test(team_id);
     if(!isnum){throw {status:409, message:'Team_id should be a number'};}
+    const team_detail = await team_utils.getTeamInfo(req.params.teamId);
     const players_details = await players_utils.getPlayersByTeam(req.params.teamId);
     const coach_details = await coach_utils.getCoachInfoByTeam(req.params.teamId);
     //we should keep implementing team page.....
@@ -27,7 +29,7 @@ router.get("/teamFullDetails/:teamId", async (req, res, next) => {
       if(game_utils.isPastGame(games[i])){pastGames.push(games[i]);}
       else{upcomingGames.push(games[i]);}
     }
-    const team_details=[players_details,coach_details,pastGames,upcomingGames];
+    const team_details=[players_details,coach_details,pastGames,upcomingGames,team_detail];
     res.send(team_details);
   } catch (error) {next(error);}
 });
