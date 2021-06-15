@@ -123,11 +123,11 @@ router.post("/addMatchResult", async (req, res, next) => {
     if (userId!==adminUserId){
       throw new Error("Player Id should be a number");
     }
-    const home_goal = req.body.homeGoals;
-    const away_goal = req.body.awayGoals;
+    const home_goal = parseInt(req.body.homeGoals);
+    const away_goal = parseInt(req.body.awayGoals);
     const match_id = req.body.matchId;
-    let validInfo = typeof(home_goal) == 'number' && typeof(away_goal) == 'number';
-    validInfo &= home_goal >=0 && away_goal>= 0;
+    let validInfo = typeof((home_goal)) == 'number' && typeof((away_goal)) == 'number';
+    validInfo =validInfo&& home_goal >=0 && away_goal>= 0;
     if(!validInfo){throw new Error('home/away Goals should be a number bigger then 0');}
     await DButils.execQuery(`UPDATE dbo.match SET homeGoals='${home_goal}', awayGoals='${away_goal}' WHERE matchId='${match_id}'`);
     res.status(201).send("Match result added");
@@ -181,5 +181,16 @@ router.post("/addReferee", async (req, res, next) => {
   } catch (error) {next(error);}
 });
 
+
+router.get("/getAllMatches", async (req, res, next) => {
+  try {
+    const games = await DButils.execQuery(
+      `SELECT * FROM dbo.match ORDER BY DATE ASC`
+    );
+    res.send(games);
+  } catch (error) {
+    next(error);
+  }
+});
 /* -------- Export Function -------- */
 module.exports = router;
