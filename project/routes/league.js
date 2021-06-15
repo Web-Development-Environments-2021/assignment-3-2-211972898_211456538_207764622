@@ -92,7 +92,7 @@ router.post("/addMatch", async (req, res, next) => {
     const awayTeamId = req.body.awayTeamId;
     const stadium = req.body.stadium;
     const referee = req.body.refereeId;
-    let time_split = hour.split(':');
+    let time_split = time.split(':');
     let date_split = date.split('-');
     // Validate
     //Time
@@ -101,9 +101,9 @@ router.post("/addMatch", async (req, res, next) => {
     input_validition &= time_split[2].length == 2 && parseInt(time_split[2]) >= 0 && parseInt(time_split[2]) < 60; //  0<= match_minute < 60
     if(!input_validition){ throw { status: 400, message: "Invalid detail about Time"};}
     //Date
-    input_validition &= date_split.length == 3 && date_split[0].length == 4 && parseInt(time_split[0]) >= 0; //  0<= match_year
-    input_validition &= time_split[1].length == 2 && parseInt(time_split[1]) >= 0 && parseInt(time_split[1]) <= 12; //  0<= match_month <= 12
-    input_validition &= time_split[2].length == 2 && parseInt(time_split[2]) >= 0 && parseInt(time_split[2]) <= 31; //  0<= match_day <= 31
+    input_validition &= date_split.length == 3 && date_split[0].length == 4 && parseInt(date_split[0]) >= 0; //  0<= match_year
+    input_validition &= date_split[1].length == 2 && parseInt(date_split[1]) >= 0 && parseInt(date_split[1]) <= 12; //  0<= match_month <= 12
+    input_validition &= date_split[2].length == 2 && parseInt(date_split[2]) >= 0 && parseInt(date_split[2]) <= 31; //  0<= match_day <= 31
     const isRefreeInDB = await DButils.execQuery(`SELECT * FROM referee WHERE refereeId = ${referee}`);
     if(!input_validition){ throw { status: 400, message: "Invalid detail about Date"};}
     else if(typeof(stadium) != 'string'){throw new Error('Invalid stadium value')}
