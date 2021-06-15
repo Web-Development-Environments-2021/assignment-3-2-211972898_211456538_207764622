@@ -47,15 +47,17 @@ router.get("/currentLeagueMatches", async (req, res, next) => {
     let upcomingGames = [];
     for(i = 0;i<games.length;i++){
       if(game_utils.isPastGame(games[i])){
+        console.log("fuckkk");
         // here we need to find the calendar
+        console.log(games[i]);
         if (games[i]["calendarId"] != null){
-          //console.log(games[i]);
+          console.log(games[i]);
           const events = await DButils.execQuery(
             `SELECT description FROM dbo.calendarEvents WHERE calendarId='${games[i]["calendarId"]}'`
           );
           games[i]["calendarEvents"] = events;
-          pastGames.push(games[i]);
         }
+        pastGames.push(games[i]);
       }
       else {
         console.log(games[i]);
