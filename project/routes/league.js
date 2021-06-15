@@ -135,20 +135,20 @@ router.post("/addMatchResult", async (req, res, next) => {
 });
 
 //Post- Crate Match Calendar
-router.post("/createMatchCalendar", async (req, res, next) => {
-  try {
-    userId = req.session.user_id;
-    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
-    if (userId!==adminUserId){
-      throw new Error("Player Id should be a number");
-    }
-    await DButils.execQuery(`INSERT INTO dbo.matchCalendar (matchId) VALUES ('${req.body.matchId}')`);
-    let matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`) 
-    if(!matchCalendarId || matchCalendarId.length == 0){throw new Error('Invalid MatchID')}
-    await DButils.execQuery(`UPDATE dbo.match SET calendarId='${matchCalendarId[0]["matchCalendarId"]}' WHERE matchId='${req.body.matchId}'`);
-    res.status(201).send("Match calendar created");
-  } catch (error) {next(error);}
-});
+// router.post("/createMatchCalendar", async (req, res, next) => {
+//   try {
+//     // userId = req.session.user_id;
+//     // const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+//     // if (userId!==adminUserId){
+//     //   throw new Error("Player Id should be a number");
+//     // }
+//     // await DButils.execQuery(`INSERT INTO dbo.matchCalendar (matchId) VALUES ('${req.body.matchId}')`);
+//     // let matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`) 
+//     // if(!matchCalendarId || matchCalendarId.length == 0){throw new Error('Invalid MatchID')}
+//     // await DButils.execQuery(`UPDATE dbo.match SET calendarId='${matchCalendarId[0]["matchCalendarId"]}' WHERE matchId='${req.body.matchId}'`);
+//     // res.status(201).send("Match calendar created");
+//   } catch (error) {next(error);}
+// });
 
 //Post- Add Event To Match calendar
 router.post("/addEventToMatchCalendar", async (req, res, next) => {
@@ -160,7 +160,11 @@ router.post("/addEventToMatchCalendar", async (req, res, next) => {
     }
     // first we find the matchCalendarId
     let matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`)
-    if(!matchCalendarId || matchCalendarId.length == 0){throw new Error('Invalid MatchID')}
+    if(!matchCalendarId || matchCalendarId.length == 0){
+      // this game still not have a calendar, lets create one.
+      await DButils.execQuery(`INSERT INTO dbo.matchCalendar (matchId) VALUES ('${req.body.matchId}')`);
+      matchCalendarId = await DButils.execQuery(`SELECT matchCalendarId FROM dbo.matchCalendar WHERE matchId='${req.body.matchId}'`) 
+    }
     await DButils.execQuery(`INSERT INTO dbo.calendarEvents (calendarId,description) VALUES ('${matchCalendarId[0]["matchCalendarId"]}','${req.body.description}')`);
     res.status(201).send("Event added to match calendar");
   } catch (error) {next(error);}
