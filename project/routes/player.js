@@ -12,6 +12,8 @@ router.get("/playerFullDetails/:playerId", async (req, res, next) => {
     let isnum = /^\d+$/.test(player_id);
     if(!isnum){throw {status:409, message:'player_Id should be a number'};}
     const players_details = await players_utils.getAllPlayerInfoById(player_id);
+    players_details["id"]= player_id;
+    console.log(players_details);
     res.send(players_details);
   } catch (error) {next(error);}
 });
