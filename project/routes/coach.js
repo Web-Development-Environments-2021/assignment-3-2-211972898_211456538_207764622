@@ -9,6 +9,7 @@ const coach_utils = require("./utils/coach_utils");
 router.get("/coachFullDetails/:coachId", async (req, res, next) => {
   try {
     const coach_details = await coach_utils.getAllCoachInfoById(req.params.coachId);
+    coach_details["id"] = req.params.coachId;
     res.send(coach_details);
   } catch (error) 
   {
