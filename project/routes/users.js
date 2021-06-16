@@ -44,6 +44,7 @@ router.get("/favoritePlayers", async (req, res, next) => {
     let player_ids_array = [];
     player_ids.map((element) => player_ids_array.push(element.playerId)); //extracting the players ids into array
     const results = await players_utils.getPlayersInfo(player_ids_array);
+    console.log(results);
     res.status(200).send(results);
   } catch (error) {next(error);}
 });
@@ -72,6 +73,7 @@ router.get("/favoriteTeams", async (req, res, next) => {
     let team_ids_array = [];
     team_ids.map((element) => team_ids_array.push(element.teamId)); //extracting the players ids into array
     const results = await team_utils.getTeamsInfo(team_ids_array);
+    console.log(results);
     res.status(200).send(results);
   } catch (error) {next(error);}
 });
@@ -96,11 +98,12 @@ router.get("/favoriteMatches", async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const match_ids = await users_utils.getFavoriteMatches(user_id);
+    console.log(match_ids);
     let match_ids_array = [];
     match_ids.map((element) => match_ids_array.push(element.matchId)); //extracting the players ids into array
     let results = await game_utils.getMatchesInfo(match_ids_array);
-    results = results.filter((element) => {element[0] !== undefined? !game_utils.isPastGame(element[0]):false});
-    res.status(200).send(results);
+    const favorites = results.filter(element => (element[0]!=undefined) &&(!game_utils.isPastGame(element[0]))); //&& element[0].length>0 && );
+    res.status(200).send(favorites);
   } catch(error){next(error);}
 });
 

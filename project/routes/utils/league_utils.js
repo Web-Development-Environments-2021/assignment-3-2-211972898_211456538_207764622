@@ -1,6 +1,7 @@
 /* ------ Import libraries & set environment variables ------*/
 const axios = require("axios");
 const LEAGUE_ID = 271;
+const STAGE_ID = 77453565;
 const DButils = require("./DButils");
 require("dotenv").config({path:'./../.env'});
 
@@ -8,7 +9,9 @@ require("dotenv").config({path:'./../.env'});
 
 // get all (name,seasonName,currentStageName) about the league
 async function getLeagueDetails() {
-  const league = await axios.get(
+  let league;
+  try{
+  league = await axios.get(
     `https://soccer.sportmonks.com/api/v2.0/leagues/${LEAGUE_ID}`,
     {
       params: {
@@ -17,15 +20,30 @@ async function getLeagueDetails() {
       },
     }
   );
-  if(league.data.data.current_stage_id == null) { return 0;}  // status: 404, message: "League stage is null"};
-  const stage = await axios.get(
-    `https://soccer.sportmonks.com/api/v2.0/stages/${league.data.data.current_stage_id}`,
-    {
-      params: {
-        api_token: process.env.api_token,
-      },
-    }
-  );
+  } catch {return 0;}
+  let stage;
+  try{
+  if(league.data.data.current_stage_id && league.data.data.current_stage_id!=null){
+    stage = await axios.get(
+      `https://soccer.sportmonks.com/api/v2.0/stages/season/${league.data.data.season.data.id}`,
+      {
+        params: {
+          api_token: process.env.api_token,
+        },
+      }
+    );
+  }
+  else {
+    stage = await axios.get(
+      `https://soccer.sportmonks.com/api/v2.0/stages/${STAGE_ID}`,
+      {
+        params: {
+          api_token: process.env.api_token,
+        },
+      }
+    );
+  } 
+  }catch{return 0;}
   return {
     league_name: league.data.data.name,
     current_season_name: league.data.data.season.data.name,
