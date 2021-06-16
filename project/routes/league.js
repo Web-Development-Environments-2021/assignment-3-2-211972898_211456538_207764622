@@ -196,5 +196,18 @@ router.get("/getAllMatches", async (req, res, next) => {
     next(error);
   }
 });
+
+
+router.get("/getReferees", async (req, res, next) => {
+  try {
+    userId = req.session.user_id;
+    const adminUserId = (await DButils.execQuery(`SELECT * FROM dbo.users WHERE username = 'admin'`))[0]["user_id"]; // select user info from database
+    if (userId!==adminUserId){
+      throw new Error("Player Id should be a number");
+    }
+    const referees = await DButils.execQuery(`SELECT * FROM dbo.referee`);
+    res.send(referees);
+  } catch (error) {next(error);}
+});
 /* -------- Export Function -------- */
 module.exports = router;
