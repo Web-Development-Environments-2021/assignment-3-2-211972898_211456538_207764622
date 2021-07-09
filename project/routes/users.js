@@ -49,6 +49,17 @@ router.get("/favoritePlayers", async (req, res, next) => {
   } catch (error) {next(error);}
 });
 
+/* This path returns the favorites players that were saved by the logged-in user*/
+router.get("/favoritePlayersIds", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const player_ids = await users_utils.getFavoritePlayers(user_id);
+    let player_ids_array = [];
+    player_ids.map((element) => player_ids_array.push(element.playerId)); //extracting the players ids into array
+    res.status(200).send(player_ids_array);
+    console.log(player_ids_array);
+  } catch (error) {next(error);}
+});
 // ------------------- Teams -----------------------
 
 /* This path gets body with playerId and save this player in the favorites list of the logged-in user*/
