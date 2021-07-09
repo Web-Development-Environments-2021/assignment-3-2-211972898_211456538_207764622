@@ -9,6 +9,10 @@ async function markPlayerAsFavorite(user_id, player_id) {
   await DButils.execQuery(`insert into dbo.FavoritePlayers values ('${user_id}',${player_id})`);
 }
 
+async function removePlayerFromFavorite(user_id, player_id) {
+  await DButils.execQuery(`delete from dbo.FavoritePlayers where (user_id='${user_id}' AND playerId='${player_id}')`);
+}
+
 // get favorit player of user
 async function getFavoritePlayers(user_id) {
   const player_ids = await DButils.execQuery(`select playerId from dbo.FavoritePlayers where user_id='${user_id}'`);
@@ -40,6 +44,7 @@ async function getFavoriteMatches(user_id) {
 
 /* -------- Export Function -------- */
 exports.markPlayerAsFavorite = markPlayerAsFavorite;
+exports.removePlayerFromFavorite = removePlayerFromFavorite;
 exports.getFavoritePlayers = getFavoritePlayers;
 exports.markTeamAsFavorite = markTeamAsFavorite;
 exports.getFavoriteTeams = getFavoriteTeams;

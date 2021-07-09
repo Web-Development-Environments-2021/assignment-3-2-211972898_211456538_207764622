@@ -35,6 +35,20 @@ router.post("/favoritePlayers", async (req, res, next) => {
     res.status(201).send("The player successfully saved as favorite");
   } catch (error) {next(error);}
 });
+/** This path gets body with playerId and delete this player in the favorites list of the logged-in user*/
+router.delete("/favoritePlayers", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const player_id = req.body.playerId;
+    console.log(player_id,typeof(player_id));
+    if(typeof(user_id) !='number' || typeof(player_id) !='number') {throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
+    const users = await DButils.execQuery("SELECT playerId FROM FavoritePlayers WHERE user_id =" + user_id); // select all user from table
+    if (!users.find((x) => x.playerId === player_id)) // validate players is uniqe
+      throw { status: 409, message: "the player is not marked as favorite by the user."};
+    await users_utils.removePlayerFromFavorite(user_id, player_id);
+    res.status(201).send("The player successfully removed from favorites");
+  } catch (error) {next(error);}
+});
 
 /* This path returns the favorites players that were saved by the logged-in user*/
 router.get("/favoritePlayers", async (req, res, next) => {
