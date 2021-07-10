@@ -50,6 +50,7 @@ function extractRelevantTeamData(teams_info) {
         image: logo_path,
         founded: founded,
         teamId: id,
+        id: id,
       };
     });
   }
