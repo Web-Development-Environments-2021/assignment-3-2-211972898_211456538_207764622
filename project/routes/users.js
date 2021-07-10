@@ -132,5 +132,18 @@ router.get("/favoriteMatches", async (req, res, next) => {
   } catch(error){next(error);}
 });
 
+router.delete("/favoriteMatches", async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const match_id = req.body.matchId;
+    if(typeof(user_id) !='number' || typeof(match_id) !='number'){throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
+    const matches = await DButils.execQuery("SELECT matchId FROM FavoriteMatches WHERE user_id =" + user_id); // select all user from table
+    if (!matches.find((x) => x.matchId === match_id)) // validate match is uniqe
+      throw { status: 409, message: "The Match is not in favorit"};
+    await users_utils.removeMatchFromFavorite(user_id, match_id);
+    res.status(201).send("The Match successfully removed from favorites");
+  } catch (error) {next(error);}
+});
+
 /* -------- Export Function -------- */
 module.exports = router;

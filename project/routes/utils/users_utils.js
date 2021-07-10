@@ -12,6 +12,9 @@ async function markPlayerAsFavorite(user_id, player_id) {
 async function removePlayerFromFavorite(user_id, player_id) {
   await DButils.execQuery(`delete from dbo.FavoritePlayers where (user_id='${user_id}' AND playerId='${player_id}')`);
 }
+async function removeMatchFromFavorite(user_id, match_id) {
+  await DButils.execQuery(`delete from dbo.FavoriteMatches where (user_id='${user_id}' AND matchId='${match_id}')`);
+}
 
 // get favorit player of user
 async function getFavoritePlayers(user_id) {
@@ -50,3 +53,4 @@ exports.markTeamAsFavorite = markTeamAsFavorite;
 exports.getFavoriteTeams = getFavoriteTeams;
 exports.getFavoriteMatches = getFavoriteMatches;
 exports.markMatchAsFavorite = markMatchAsFavorite;
+exports.removeMatchFromFavorite = removeMatchFromFavorite;
