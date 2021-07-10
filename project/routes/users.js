@@ -98,11 +98,27 @@ router.get("/favoriteTeams", async (req, res, next) => {
     let team_ids_array = [];
     team_ids.map((element) => team_ids_array.push(element.teamId)); //extracting the players ids into array
     const results = await team_utils.getTeamsInfo(team_ids_array);
-    console.log(results);
     res.status(200).send(results);
   } catch (error) {next(error);}
 });
 
+
+router.delete("/favoriteTeams", async (req, res, next) => {
+  try {
+    console.log("Here1");
+    const user_id = req.session.user_id;
+    const team_id = req.body.teamId;
+    console.log("Here2");
+    if(typeof(user_id) !='number' || typeof(user_id) !='number'){throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
+    const teams = await DButils.execQuery("SELECT matchId FROM FavoriteTeams WHERE user_id =" + user_id); // select all user from table
+    console.log("Here3");
+    if (!teams.find((x) => x.teamId === team_id)) // validate match is uniqe
+      throw { status: 409, message: "The Match is not in favorit"};
+    console.log("Here4");
+    await users_utils.removeTeamFromFavorite(user_id, team_id);
+    res.status(201).send("The Match successfully removed from favorites");
+  } catch (error) {next(error);}
+});
 // ------------------- MATCHES -----------------------
 /* This path gets body with playerId and save this player in the favorites list of the logged-in user*/
 router.post("/favoriteMatches", async (req, res, next) => {
