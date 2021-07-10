@@ -44,11 +44,12 @@ function extractRelevantTeamData(teams_info) {
       if (team_info.data.data === undefined){
         return undefined;
       }
-      const { name, logo_path, founded } = team_info.data.data;
+      const { name, logo_path, founded,id } = team_info.data.data;
       return {
         name: name,
         image: logo_path,
         founded: founded,
+        teamId: id,
       };
     });
   }

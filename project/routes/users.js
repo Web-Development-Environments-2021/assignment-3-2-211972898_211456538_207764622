@@ -110,7 +110,7 @@ router.delete("/favoriteTeams", async (req, res, next) => {
     const team_id = req.body.teamId;
     console.log("Here2");
     if(typeof(user_id) !='number' || typeof(user_id) !='number'){throw{ status:400 , message: 'one of the arguments is not specified correctly.'};}
-    const teams = await DButils.execQuery("SELECT matchId FROM FavoriteTeams WHERE user_id =" + user_id); // select all user from table
+    const teams = await DButils.execQuery("SELECT teamId FROM FavoriteTeams WHERE user_id =" + user_id); // select all user from table
     console.log("Here3");
     if (!teams.find((x) => x.teamId === team_id)) // validate match is uniqe
       throw { status: 409, message: "The Match is not in favorit"};
